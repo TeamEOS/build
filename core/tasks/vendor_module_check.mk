@@ -35,7 +35,7 @@ _vendor_owner_whitelist := \
         widevine
 
 
-ifneq (,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RESTRICT_VENDOR_FILES))
+ifeq (,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RESTRICT_VENDOR_FILES))
 
 _vendor_check_modules := $(sort $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_PACKAGES))
 $(call expand-required-modules,_vendor_check_modules,$(_vendor_check_modules))
