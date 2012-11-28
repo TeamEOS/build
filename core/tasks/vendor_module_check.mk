@@ -36,7 +36,7 @@ _vendor_owner_whitelist := \
         widevine
 
 
-ifneq (,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RESTRICT_VENDOR_FILES))
+ifeq (,$(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_RESTRICT_VENDOR_FILES))
 
 _vendor_check_modules := $(product_MODULES)
 
