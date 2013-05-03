@@ -29,6 +29,9 @@ import threading
 import time
 import zipfile
 
+#Global variable
+fs_type = 0
+
 try:
   from hashlib import sha1 as sha1
 except ImportError:
@@ -494,6 +497,8 @@ def CheckSize(data, target, info_dict):
   if info_dict["fstab"]:
     if mount_point == "/userdata": mount_point = "/data"
     p = info_dict["fstab"][mount_point]
+    # Declare fs_type global to fix 'UnboundLocalErrors'
+    global fs_type
     fs_type = p.fs_type
     device = p.device
     if "/" in device:
