@@ -68,16 +68,37 @@ endif
 
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
-TARGET_arm_CFLAGS :=    -O2 \
-                        -fomit-frame-pointer \
-                        -fstrict-aliasing    \
-                        -funswitch-loops
+# AOSP
+#TARGET_arm_CFLAGS :=    -O2 \
+#                        -fomit-frame-pointer \
+#                        -fstrict-aliasing    \
+#                        -funswitch-loops
+#
+# Modules can choose to compile some source as thumb.
+#TARGET_thumb_CFLAGS :=  -mthumb \
+#                        -Os \
+#                        -fomit-frame-pointer \
+#                        -fno-strict-aliasing
+#
+
+# EOS
+TARGET_arm_CFLAGS :=    -fomit-frame-pointer    \
+                        -fstrict-aliasing       \
+                        -funswitch-loops        \
+                        -fstrict-aliasing       \
+                        -Wstrict-aliasing=2     \
+                        -Werror=strict-aliasing \
+                        -pipe
 
 # Modules can choose to compile some source as thumb.
-TARGET_thumb_CFLAGS :=  -mthumb \
-                        -Os \
-                        -fomit-frame-pointer \
-                        -fno-strict-aliasing
+TARGET_thumb_CFLAGS :=  -mthumb                 \
+                        -fomit-frame-pointer    \
+                        -fstrict-aliasing       \
+                        -Wstrict-aliasing=2     \
+                        -Werror=strict-aliasing \
+                        -pipe
+
+include $(BUILD_SYSTEM)/eos_config.mk
 
 # Set FORCE_ARM_DEBUGGING to "true" in your buildspec.mk
 # or in your environment to force a full arm build, even for
@@ -142,13 +163,20 @@ TARGET_GLOBAL_CFLAGS += -mthumb-interwork
 TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
 
 # More flags/options can be added here
+# AOSP
+#TARGET_RELEASE_CFLAGS := \
+#			-DNDEBUG \
+#			-g \
+#			-Wstrict-aliasing=2 \
+#			-fgcse-after-reload \
+#			-frerun-cse-after-loop \
+#			-frename-registers
+
+# EOS
 TARGET_RELEASE_CFLAGS := \
 			-DNDEBUG \
 			-g \
-			-Wstrict-aliasing=2 \
-			-fgcse-after-reload \
-			-frerun-cse-after-loop \
-			-frename-registers
+			-Wstrict-aliasing=2
 
 libc_root := bionic/libc
 libm_root := bionic/libm

@@ -31,6 +31,15 @@ PRODUCT_PACKAGES += \
     PacProcessor \
     ProxyHandler \
     SharedStorageBackup \
-    VpnDialogs
+    VpnDialogs \
+    libanalogradiobroadcasting \
+    libkissfft \
+    make_ext4fs \
+    liblz4 \
+    libminiz \
+    lrzsz \
+    lz4c \
+    perf \
+    x264
 
 $(call inherit-product, $(SRC_TARGET_DIR)/product/core_base.mk)

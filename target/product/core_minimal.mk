@@ -50,9 +50,14 @@ PRODUCT_PACKAGES += \
     libdrmframework \
     libdrmframework_jni \
     libfilterfw \
+    liblz4 \
+    libminiz \
     libsqlite_jni \
     libwilhelm \
+    libz \
+    lz4c \
     make_ext4fs \
+    perf \
     screencap \
     sensorservice \
     uiautomator
