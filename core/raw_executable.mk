@@ -5,7 +5,7 @@ LOCAL_FORCE_STATIC_EXECUTABLE := true
 include $(BUILD_SYSTEM)/binary.mk
 
 $(LOCAL_BUILT_MODULE) : PRIVATE_ELF_FILE := $(intermediates)/$(PRIVATE_MODULE).elf
-$(LOCAL_BUILT_MODULE) : PRIVATE_LIBS := `$(TARGET_CC) -mthumb-interwork -print-libgcc-file-name`
+$(LOCAL_BUILT_MODULE) : PRIVATE_LIBS := `$(TARGET_CC) -print-libgcc-file-name`
 
 $(all_objects) : PRIVATE_TARGET_PROJECT_INCLUDES :=
 $(all_objects) : PRIVATE_TARGET_C_INCLUDES :=

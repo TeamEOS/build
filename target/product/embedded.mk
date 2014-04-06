@@ -66,7 +66,9 @@ PRODUCT_PACKAGES += \
     sh \
     surfaceflinger \
     toolbox \
-    libsigchain
+    libsigchain \
+    iw \
+    libnl
 
 # SELinux packages
 PRODUCT_PACKAGES += \

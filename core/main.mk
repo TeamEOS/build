@@ -361,6 +361,16 @@ else # !user_variant
   ADDITIONAL_DEFAULT_PROPERTIES += ro.allow.mock.location=1
 endif # !user_variant
 
+# EOS
+  # Ensure builds are easier to debug.
+  enable_target_debugging := true
+  # Enable Dalvik lock contention logging.
+  ADDITIONAL_BUILD_PROPERTIES += dalvik.vm.lockprof.threshold=500
+  # Ensure checkjni is disabled.
+  ADDITIONAL_BUILD_PROPERTIES += ro.kernel.android.checkjni=0
+  # Disable strict mode.
+  ADDITIONAL_DEFAULT_PROPERTIES += persist.sys.strictmode.disable=true
+
 ifeq (true,$(strip $(enable_target_debugging)))
   # Target is more debuggable and adbd is on by default
   ADDITIONAL_DEFAULT_PROPERTIES += ro.debuggable=1
@@ -529,21 +539,22 @@ ifeq ($(stash_product_vars),true)
   $(call assert-product-vars, __STASHED)
 endif
 
+# EOS: Allow legacy ALL_PREBUILT
 include $(BUILD_SYSTEM)/legacy_prebuilts.mk
-ifneq ($(filter-out $(GRANDFATHERED_ALL_PREBUILT),$(strip $(notdir $(ALL_PREBUILT)))),)
-  $(warning *** Some files have been added to ALL_PREBUILT.)
-  $(warning *)
-  $(warning * ALL_PREBUILT is a deprecated mechanism that)
-  $(warning * should not be used for new files.)
-  $(warning * As an alternative, use PRODUCT_COPY_FILES in)
-  $(warning * the appropriate product definition.)
-  $(warning * build/target/product/core.mk is the product)
-  $(warning * definition used in all products.)
-  $(warning *)
-  $(foreach bad_prebuilt,$(filter-out $(GRANDFATHERED_ALL_PREBUILT),$(strip $(notdir $(ALL_PREBUILT)))),$(warning * unexpected $(bad_prebuilt) in ALL_PREBUILT))
-  $(warning *)
-  $(error ALL_PREBUILT contains unexpected files)
-endif
+#ifneq ($(filter-out $(GRANDFATHERED_ALL_PREBUILT),$(strip $(notdir $(ALL_PREBUILT)))),)
+#  $(warning *** Some files have been added to ALL_PREBUILT.)
+#  $(warning *)
+#  $(warning * ALL_PREBUILT is a deprecated mechanism that)
+#  $(warning * should not be used for new files.)
+#  $(warning * As an alternative, use PRODUCT_COPY_FILES in)
+#  $(warning * the appropriate product definition.)
+#  $(warning * build/target/product/core.mk is the product)
+#  $(warning * definition used in all products.)
+#  $(warning *)
+#  $(foreach bad_prebuilt,$(filter-out $(GRANDFATHERED_ALL_PREBUILT),$(strip $(notdir $(ALL_PREBUILT)))),$(warning * unexpected $(bad_prebuilt) in ALL_PREBUILT))
+#  $(warning *)
+#  $(error ALL_PREBUILT contains unexpected files)
+#endif
 
 # -------------------------------------------------------------------
 # All module makefiles have been included at this point.
@@ -1037,7 +1048,7 @@ findbugs: $(INTERNAL_FINDBUGS_HTML_TARGET) $(INTERNAL_FINDBUGS_XML_TARGET)
 
 .PHONY: clean
 clean:
-	@rm -rf $(OUT_DIR)
+	@rm -rf $(OUT_DIR)/*
 	@echo "Entire build directory removed."
 
 .PHONY: clobber

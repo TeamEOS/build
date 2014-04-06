@@ -77,6 +77,8 @@ $(combo_2nd_arch_prefix)TARGET_thumb_CFLAGS :=  -mthumb \
                         -fomit-frame-pointer \
                         -fno-strict-aliasing
 
+include $(BUILD_SYSTEM)/eos_config.mk
+
 # Set FORCE_ARM_DEBUGGING to "true" in your buildspec.mk
 # or in your environment to force a full arm build, even for
 # files that are normally built as thumb; this can make
@@ -145,10 +147,7 @@ $(combo_2nd_arch_prefix)TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
 $(combo_2nd_arch_prefix)TARGET_RELEASE_CFLAGS := \
 			-DNDEBUG \
 			-g \
-			-Wstrict-aliasing=2 \
-			-fgcse-after-reload \
-			-frerun-cse-after-loop \
-			-frename-registers
+			-Wstrict-aliasing=2
 
 libc_root := bionic/libc
 libm_root := bionic/libm
