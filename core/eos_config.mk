@@ -29,6 +29,7 @@ endif
 
 # Use -O2 for TARGET_arm_CFLAGS for the following devices due to
 # "problem" modules until they're discovered
+ifeq ($(ARCH_ARM_HIGH_OPTIMIZATION),true)
 ifneq ($(filter m7att m7spr m7tmo m7wls,$(PRODUCT_DEVICE)),)
   TARGET_arm_CFLAGS += -O2
 else
@@ -38,7 +39,7 @@ else
     TARGET_arm_CFLAGS += -O3
 endif
 endif
-
+endif
 
 ifeq ($(TARGET_QCOM_DISPLAY_VARIANT),legacy)
   TARGET_EOS_CFLAGS += -DLEGACY_QCOM_VARIANT

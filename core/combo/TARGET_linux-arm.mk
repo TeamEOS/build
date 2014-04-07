@@ -68,35 +68,16 @@ endif
 
 TARGET_NO_UNDEFINED_LDFLAGS := -Wl,--no-undefined
 
-# AOSP
-#TARGET_arm_CFLAGS :=    -O2 \
-#                        -fomit-frame-pointer \
-#                        -fstrict-aliasing    \
-#                        -funswitch-loops
-#
-# Modules can choose to compile some source as thumb.
-#TARGET_thumb_CFLAGS :=  -mthumb \
-#                        -Os \
-#                        -fomit-frame-pointer \
-#                        -fno-strict-aliasing
-#
-
-# EOS
-TARGET_arm_CFLAGS :=    -fomit-frame-pointer    \
-                        -fstrict-aliasing       \
-                        -funswitch-loops        \
-                        -fstrict-aliasing       \
-                        -Wstrict-aliasing=2     \
-                        -Werror=strict-aliasing \
-                        -pipe
+TARGET_arm_CFLAGS :=    -O2 \
+                        -fomit-frame-pointer \
+                        -fstrict-aliasing    \
+                        -funswitch-loops
 
 # Modules can choose to compile some source as thumb.
-TARGET_thumb_CFLAGS :=  -mthumb                 \
-                        -fomit-frame-pointer    \
-                        -fstrict-aliasing       \
-                        -Wstrict-aliasing=2     \
-                        -Werror=strict-aliasing \
-                        -pipe
+TARGET_thumb_CFLAGS :=  -mthumb \
+                        -Os \
+                        -fomit-frame-pointer \
+                        -fno-strict-aliasing
 
 include $(BUILD_SYSTEM)/eos_config.mk
 
@@ -163,20 +144,21 @@ TARGET_GLOBAL_CFLAGS += -mthumb-interwork
 TARGET_GLOBAL_CPPFLAGS += -fvisibility-inlines-hidden
 
 # More flags/options can be added here
-# AOSP
-#TARGET_RELEASE_CFLAGS := \
-#			-DNDEBUG \
-#			-g \
-#			-Wstrict-aliasing=2 \
-#			-fgcse-after-reload \
-#			-frerun-cse-after-loop \
-#			-frename-registers
-
-# EOS
 TARGET_RELEASE_CFLAGS := \
 			-DNDEBUG \
 			-g \
-			-Wstrict-aliasing=2
+			-Wstrict-aliasing=2 \
+			-fgcse-after-reload \
+			-frerun-cse-after-loop \
+			-frename-registers
+
+TARGET_RELEASE_CFLAGS := \
+			-DNDEBUG \
+			-g \
+			-Wstrict-aliasing=2 \
+			-fgcse-after-reload \
+			-frerun-cse-after-loop \
+			-frename-registers
 
 libc_root := bionic/libc
 libm_root := bionic/libm
