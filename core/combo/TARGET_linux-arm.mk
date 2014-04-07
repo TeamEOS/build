@@ -152,14 +152,6 @@ TARGET_RELEASE_CFLAGS := \
 			-frerun-cse-after-loop \
 			-frename-registers
 
-TARGET_RELEASE_CFLAGS := \
-			-DNDEBUG \
-			-g \
-			-Wstrict-aliasing=2 \
-			-fgcse-after-reload \
-			-frerun-cse-after-loop \
-			-frename-registers
-
 libc_root := bionic/libc
 libm_root := bionic/libm
 libstdc++_root := bionic/libstdc++

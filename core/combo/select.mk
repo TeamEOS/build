@@ -51,10 +51,6 @@ $(combo_target)RELEASE_CFLAGS := -O2 -g -fno-strict-aliasing
 $(combo_target)GLOBAL_LDFLAGS :=
 $(combo_target)GLOBAL_ARFLAGS := crsP
 
-$(combo_target)GLOBAL_CFLAGS := -fno-exceptions -Wno-multichar
-$(combo_target)RELEASE_CFLAGS := -O2 -g -Wstrict-aliasing
-$(combo_target)GLOBAL_ARFLAGS := crsP
-
 $(combo_target)EXECUTABLE_SUFFIX :=
 $(combo_target)SHLIB_SUFFIX := .so
 $(combo_target)JNILIB_SUFFIX := $($(combo_target)SHLIB_SUFFIX)
