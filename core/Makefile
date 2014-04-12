@@ -455,6 +455,10 @@ ifdef BOARD_KERNEL_PAGESIZE
   INTERNAL_BOOTIMAGE_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
 endif
 
+ifneq ($(BOARD_FORCE_RAMDISK_ADDRESS),)
+  $(error BOARD_FORCE_RAMDISK_ADDRESS has been deprecated. Use BOARD_MKBOOTIMG_ARGS.)
+endif
+
 INSTALLED_BOOTIMAGE_TARGET := $(PRODUCT_OUT)/boot.img
 
 ifeq ($(TARGET_BOOTIMAGE_USE_EXT2),true)
@@ -724,7 +728,9 @@ BOARD_KERNEL_PAGESIZE := $(strip $(BOARD_KERNEL_PAGESIZE))
 ifdef BOARD_KERNEL_PAGESIZE
   INTERNAL_RECOVERYIMAGE_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
 endif
-
+ifneq ($(BOARD_FORCE_RAMDISK_ADDRESS),)
+  INTERNAL_RECOVERYIMAGE_ARGS += --ramdiskaddr $(BOARD_FORCE_RAMDISK_ADDRESS)
+endif
 INTERNAL_RECOVERY_FILES := $(filter $(TARGET_RECOVERY_OUT)/%, \
 	$(foreach module, $(ALL_MODULES), $(ALL_MODULES.$(module).INSTALLED)) \
 	$(ALL_DEFAULT_INSTALLED_MODULES))
@@ -1290,6 +1296,9 @@ endif
 ifdef INSTALLED_KERNEL_TARGET
 	$(hide) $(ACP) $(INSTALLED_KERNEL_TARGET) $(zip_root)/BOOT/kernel
 endif
+ifdef INSTALLED_RAMDISK_TARGET
+	$(hide) $(ACP) $(INSTALLED_RAMDISK_TARGET) $(zip_root)/BOOT/ramdisk.img
+endif
 ifdef INSTALLED_2NDBOOTLOADER_TARGET
 	$(hide) $(ACP) \
 		$(INSTALLED_2NDBOOTLOADER_TARGET) $(zip_root)/BOOT/second
@@ -1302,6 +1311,9 @@ ifdef BOARD_KERNEL_BASE
 endif
 ifdef BOARD_KERNEL_PAGESIZE
 	$(hide) echo "$(BOARD_KERNEL_PAGESIZE)" > $(zip_root)/BOOT/pagesize
+endif
+ifdef ZIP_SAVE_UBOOTIMG_ARGS
+	$(hide) echo "$(ZIP_SAVE_UBOOTIMG_ARGS)" > $(zip_root)/BOOT/ubootargs
 endif
 	$(hide) $(foreach t,$(INSTALLED_RADIOIMAGE_TARGET),\
 	            mkdir -p $(zip_root)/RADIO; \
@@ -1394,6 +1406,7 @@ else
 endif
 
 $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
+	@echo "$(BOARD_CUSTOM_BOOTIMG_MK)" > $(PRODUCT_OUT)/ota_custom_bootimg_mk
 	@echo -e ${PRT_HST}"Package OTA: $@"${CL_RST}
 	MKBOOTIMG=$(BOARD_CUSTOM_BOOTIMG_MK) \
 	$(OTA_FROM_TARGET_SCRIPT) -v \
