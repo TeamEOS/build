@@ -55,7 +55,8 @@ $(combo_target)RELEASE_CFLAGS += -Wno-error=strict-aliasing
 endif
 # Turn off strict-aliasing if we're building an AOSP variant without the
 # patchset...
-ifeq ($(DEBUG_NO_STRICT_ALIASING),yes)
+# NOTICE: Turned strict-aliasing off by default
+ifneq ($(ENABLE_STRICT_ALIASING),yes)
 $(combo_target)RELEASE_CFLAGS += -fno-strict-aliasing -Wno-error=strict-aliasing
 endif
 $(combo_target)GLOBAL_LDFLAGS := -Wl,-O2 -Wl,--sort-common -s

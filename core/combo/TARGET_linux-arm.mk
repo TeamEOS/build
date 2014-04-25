@@ -83,7 +83,8 @@ include $(BUILD_SYSTEM)/eos_config.mk
 
 # Turn off strict-aliasing if we're building an AOSP variant without the
 # patchset...
-ifeq ($(DEBUG_NO_STRICT_ALIASING),yes)
+# NOTICE: Turned strict-aliasing off by default
+ifneq ($(ENABLE_STRICT_ALIASING),yes)
 TARGET_arm_CFLAGS += -fno-strict-aliasing -Wno-error=strict-aliasing
 TARGET_thumb_CFLAGS += -fno-strict-aliasing -Wno-error=strict-aliasing
 endif
