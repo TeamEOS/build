@@ -47,7 +47,17 @@ $(combo_target)HAVE_STRLCAT := 0
 $(combo_target)HAVE_KERNEL_MODULES := 0
 
 $(combo_target)GLOBAL_CFLAGS := -fno-exceptions -Wno-multichar
-$(combo_target)RELEASE_CFLAGS := -O2 -g -fno-strict-aliasing
+$(combo_target)RELEASE_CFLAGS := -O2 -g -Wstrict-aliasing=2
+ifneq ($(combo_target),HOST_)
+$(combo_target)RELEASE_CFLAGS += -Werror=strict-aliasing
+else
+$(combo_target)RELEASE_CFLAGS += -Wno-error=strict-aliasing
+endif
+# Turn off strict-aliasing if we're building an AOSP variant without the
+# patchset...
+ifeq ($(DEBUG_NO_STRICT_ALIASING),yes)
+$(combo_target)RELEASE_CFLAGS += -fno-strict-aliasing -Wno-error=strict-aliasing
+endif
 $(combo_target)GLOBAL_LDFLAGS :=
 $(combo_target)GLOBAL_ARFLAGS := crsP
 
