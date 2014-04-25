@@ -93,7 +93,13 @@ ifneq ($(USE_CCACHE),)
   ifeq ($(HOST_OS)-$(BUILD_OS),windows-linux)
     CCACHE_HOST_TAG := linux-$(BUILD_ARCH)
   endif
-  ccache := prebuilts/misc/$(CCACHE_HOST_TAG)/ccache/ccache
+  # Optionally use the host ccache binary over the prebuilt one.
+  # It has been shown that ccache 3.x using direct mode can be several times
+  # faster than using the current ccache 2.4 that is used by default
+  # use the system ccache if it exists, else default to the one in prebuilts.
+  ifneq ($(USE_HOST_CCACHE),true)
+    ccache := prebuilts/misc/$(CCACHE_HOST_TAG)/ccache/ccache
+  endif
   # Check that the executable is here.
   ccache := $(strip $(wildcard $(ccache)))
   ifdef ccache
