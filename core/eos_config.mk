@@ -21,6 +21,13 @@ else
   $(combo_2nd_arch_prefix)TARGET_thumb_CFLAGS += -Os
 endif
 
+# Only set -O3 for arm cflags if explicitly specified
+ifeq ($(ARCH_ARM_HIGH_OPTIMIZATION),true)
+  $(combo_2nd_arch_prefix)TARGET_arm_CFLAGS += -O3
+else
+  $(combo_2nd_arch_prefix)TARGET_arm_CFLAGS += -O2
+endif
+
 # A clean way of only disabling a few optimizations that
 # cause problems on devices such as Grouper
 ifeq ($(ARCH_ARM_HIGH_OPTIMIZATION_COMPAT),true)
