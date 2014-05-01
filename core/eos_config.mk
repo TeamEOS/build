@@ -18,14 +18,14 @@
 ifeq ($(ARCH_ARM_HIGH_OPTIMIZATION),true)
   TARGET_thumb_CFLAGS += -O3
 else
-  TARGET_thumb_CFLAGS += -Os
+  TARGET_thumb_CFLAGS += -O2
 endif
 
 # Only set -O3 for arm cflags if explicitly specified
 ifeq ($(ARCH_ARM_HIGH_OPTIMIZATION),true)
   TARGET_arm_CFLAGS += -O3
 else
-  TARGET_arm_CFLAGS += -Os
+  TARGET_arm_CFLAGS += -O2
 endif
 
 # A clean way of only disabling a few optimizations that
@@ -39,13 +39,13 @@ endif
 ifeq ($(ARCH_ARM_HIGH_OPTIMIZATION),true)
 ifneq ($(filter m7att m7spr m7tmo m7wls,$(PRODUCT_DEVICE)),)
   TARGET_arm_CFLAGS += -O2
-else
+endif
+endif
+
+# Use -Os for TARGET_arm_CFLAGS for devices with small system
+# partitions such as Xoom to produce smaller executables
 ifeq ($(TARGET_BUILD_SMALL_SYSTEM),true)
-    TARGET_arm_CFLAGS += -O2
-else
-    TARGET_arm_CFLAGS += -O3
-endif
-endif
+    TARGET_arm_CFLAGS += -Os
 endif
 
 ifeq ($(TARGET_QCOM_DISPLAY_VARIANT),legacy)
