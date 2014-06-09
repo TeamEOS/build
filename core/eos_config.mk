@@ -54,3 +54,9 @@ endif
 ifeq ($(TARGET_QCOM_DISPLAY_VARIANT),caf)
   TARGET_EOS_CFLAGS += -DCAF_QCOM_VARIANT
 endif
+
+# Global defines for skia neon optimization
+ifeq ($(ARCH_ARM_HAVE_NEON),true)
+  TARGET_GLOBAL_CFLAGS += -DSKPAINTOPTIONS_OPT
+  TARGET_GLOBAL_CPPFLAGS += -DSKPAINTOPTIONS_OPT
+endif
