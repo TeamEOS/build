@@ -164,7 +164,7 @@ ifeq ($(TARGET_ARCH),arm)
 			else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.7)
                 ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7/bin/arm-eabi-"
         	else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.8)
-                ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8)/bin/arm-eabi-"
+                ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-"
         	else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.8-linaro)
                 ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.8-linaro/bin/arm-eabi-"
         	else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.9-linaro)
