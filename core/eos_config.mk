@@ -57,6 +57,6 @@ endif
 
 # Global defines for skia neon optimization
 ifeq ($(ARCH_ARM_HAVE_NEON),true)
-  TARGET_GLOBAL_CFLAGS += -DSKPAINTOPTIONS_OPT
-  TARGET_GLOBAL_CPPFLAGS += -DSKPAINTOPTIONS_OPT
+  TARGET_GLOBAL_CFLAGS += -DSkPaintOptionsAndroid_DEFINED
+  TARGET_GLOBAL_CPPFLAGS += -DSkPaintOptionsAndroid_DEFINED
 endif
