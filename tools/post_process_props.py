@@ -121,8 +121,8 @@ def main(argv):
     sys.stderr.write("bad command line: " + str(argv) + "\n")
     sys.exit(1)
 
-  if not validate(properties):
-    sys.exit(1)
+  #if not validate(properties):
+    #sys.exit(1)
 
   f = open(filename, 'w+')
   properties.write(f)
