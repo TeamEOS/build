@@ -148,42 +148,9 @@ ifeq ($(TARGET_ARCH),arm)
     endif 
     ifneq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),)
         ifeq ($(HOST_OS),darwin)
-        	ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.6)
-                ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin/arm-eabi-"
-			else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.7)
-                ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7/bin/arm-eabi-"
-        	else
-        		$(warning Selected toolchain used for kernel, is not supported. See build/core/tasks/kernel.mk)
-        		$(warning Using arm-eabi-4.7 instead.)
-        		ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/darwin-x86/arm/arm-eabi-4.7/bin/arm-eabi-"
-        	endif
-        endif
-        ifeq ($(HOST_OS),linux)
-        	ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.6)
-                ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.6/bin/arm-eabi-"
-		else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.7)
-                ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7/bin/arm-eabi-"
-                else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.7-linaro-a8)
-                ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7-linaro-a8/bin/arm-gnueabi-"
-        	else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.8)
-                ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-"
-                else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.8-linaro)
-                ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8-linaro/bin/arm-gnueabi-"
-                else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.9-linaro)
-                ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.9-linaro/bin/arm-eabi-"
-                else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.8-linaro-a9)
-                ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8-linaro-a9/bin/arm-gnueabi-"
-                else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.9-linaro-a9)
-                ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.9-linaro-a9/bin/arm-eabi-"
-                else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.8-linaro-a15)
-                ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8-linaro-a15/bin/arm-gnueabi-"
-                else ifeq ($(TARGET_KERNEL_CUSTOM_TOOLCHAIN),4.9-linaro-a15)
-                ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.9-linaro-a15/bin/arm-eabi-"
-        	else
-        		$(warning Selected toolchain used for kernel, is not supported. See build/core/tasks/kernel.mk)
-        		$(warning Using arm-eabi-4.7 instead.)
-        		ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilts/gcc/linux-x86/arm/arm-eabi-4.7/bin/arm-eabi-"
-        	endif
+            ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilt/darwin-x86/toolchain/$(TARGET_KERNEL_CUSTOM_TOOLCHAIN)/bin/arm-eabi-"
+        else
+            ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ANDROID_BUILD_TOP)/prebuilt/linux-x86/toolchain/$(TARGET_KERNEL_CUSTOM_TOOLCHAIN)/bin/arm-eabi-"
         endif
     else
         ARM_CROSS_COMPILE:=CROSS_COMPILE="$(ccache) $(ARM_EABI_TOOLCHAIN)/arm-eabi-"
