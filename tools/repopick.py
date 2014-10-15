@@ -115,7 +115,7 @@ def execute_cmd(cmd, exit_on_fail=True):
     ret = os.system(cmd)
     if ret and exit_on_fail:
         if not args.verbose:
-            sys.stderr.write('\nERROR: Command that failed:\n%s' % cmd)
+            sys.stderr.write('\nERROR: Command that failed:\n%s\n' % cmd)
         sys.exit(1)
     return ret
 
@@ -285,7 +285,7 @@ for change in args.change_number:
             if args.force:
                 sys.stdout.write("!! Force-picking a merged commit !!\n")
             else:
-                sys.stderr.write("Commit already merged. Skipping the cherry pick.\nUse -f to force this pick.")
+                sys.stderr.write("Commit already merged. Skipping the cherry pick.\nUse -f to force this pick.\n")
                 continue;
 
         # Convert the project name to a project path
@@ -323,7 +323,7 @@ for change in args.change_number:
         FETCH_HEAD = '%s/.git/FETCH_HEAD' % project_path
         if os.stat(FETCH_HEAD).st_size == 0:
             # That didn't work, print error and exit
-            sys.stderr.write('ERROR: Fetching change from Gerrit failed. Exiting...')
+            sys.stderr.write('ERROR: Fetching change from Gerrit failed. Exiting...\n')
             continue;
         # Perform the cherry-pick or checkout
         if args.checkout:
