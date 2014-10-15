@@ -39,6 +39,9 @@ except ImportError:
   urllib = imp.new_module('urllib')
   urllib.request = urllib2
 
+if not hasattr(__builtins__, 'xrange'):
+    xrange = range
+
 # Parse the command line
 parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap.dedent('''\
     repopick.py is a utility to simplify the process of cherry picking
