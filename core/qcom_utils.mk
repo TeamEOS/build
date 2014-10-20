@@ -223,3 +223,19 @@ $(strip \
   $(if $(strip $(acn)),true,) \
 )
 endef
+
+# $(platform-for-display)
+# return the platform for accessing the display includes
+define platform-for-display
+$(strip \
+  $(if $(filter _ _cm_aosp,_$(TARGET_QCOM_DISPLAY_VARIANT)),\
+    $(if $(filter msm8974 msm8x74,$(TARGET_BOARD_PLATFORM)),\
+      msm8974,\
+      $(if $(filter msm8226,$(TARGET_BOARD_PLATFORM)),\
+        msm8x26,\
+        msm8960\
+      )\
+    ),\
+  .)\
+)
+endef
