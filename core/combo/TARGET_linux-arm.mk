@@ -74,6 +74,7 @@ TARGET_arm_CFLAGS :=    -fomit-frame-pointer \
 
 # Modules can choose to compile some source as thumb.
 TARGET_thumb_CFLAGS :=  -mthumb \
+                        -Os \
                         -fomit-frame-pointer \
                         -fstrict-aliasing \
                         -Wstrict-aliasing=2 \
