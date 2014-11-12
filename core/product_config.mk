@@ -184,8 +184,8 @@ ifneq ($(strip $(TARGET_BUILD_APPS)),)
 all_product_configs := $(call get-product-makefiles,\
     $(SRC_TARGET_DIR)/product/AndroidProducts.mk)
 else
-  ifneq ($(CM_BUILD),)
-    all_product_configs := $(shell ls device/*/$(CM_BUILD)/cm.mk)
+  ifneq ($(EOS_BUILD),)
+    all_product_configs := $(shell ls device/*/$(EOS_BUILD)/eos.mk)
   else
     # Read in all of the product definitions specified by the AndroidProducts.mk
     # files in the tree.
@@ -193,7 +193,7 @@ else
   endif
 endif
 
-ifeq ($(CM_BUILD),)
+ifeq ($(EOS_BUILD),)
 # Find the product config makefile for the current product.
 # all_product_configs consists items like:
 # <product_name>:<path_to_the_product_makefile>
@@ -386,28 +386,6 @@ endif
 # The optional :<owner> is used to indicate the owner of a vendor file.
 PRODUCT_COPY_FILES := \
     $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_COPY_FILES))
-_boot_animation := $(strip $(lastword $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_BOOTANIMATION)))
-ifneq ($(_boot_animation),)
-PRODUCT_COPY_FILES += \
-    $(_boot_animation):system/media/bootanimation.zip
-endif
-_boot_animation :=
-
-# We might want to skip items listed in PRODUCT_COPY_FILES for
-# various reasons. This is useful for replacing a binary module with one
-# built from source. This should be a list of destination files under $OUT
-PRODUCT_COPY_FILES_OVERRIDES := \
-	$(addprefix %:, $(strip $(PRODUCTS.$(INTERNAL_PRODUCT).PRODUCT_COPY_FILES_OVERRIDES)))
-
-ifneq ($(PRODUCT_COPY_FILES_OVERRIDES),)
-    PRODUCT_COPY_FILES := $(filter-out $(PRODUCT_COPY_FILES_OVERRIDES), $(PRODUCT_COPY_FILES))
-endif
-
-.PHONY: listcopies
-listcopies:
-	@echo "Copy files: $(PRODUCT_COPY_FILES)"
-	@echo "Overrides: $(PRODUCT_COPY_FILES_OVERRIDES)"
-
 
 # A list of property assignments, like "key = value", with zero or more
 # whitespace characters on either side of the '='.
