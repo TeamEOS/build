@@ -1539,7 +1539,6 @@ ifdef BUILD_NO
 	$(hide) echo "build_number=$(BUILD_NO)" >> $(zip_root)/META/misc_info.txt
 endif
 	$(call generate-userimage-prop-dictionary, $(zip_root)/META/misc_info.txt)
-	$(hide) ./build/tools/releasetools/make_recovery_patch $(zip_root) $(zip_root)
 ifdef PRODUCT_DEFAULT_DEV_CERTIFICATE
 	$(hide) build/tools/getb64key.py $(PRODUCT_DEFAULT_DEV_CERTIFICATE).x509.pem > $(zip_root)/META/releasekey.txt
 else
@@ -1613,7 +1612,6 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	@echo -e ${CL_YLW}"Package OTA:"${CL_RST}" $@"
 	$(hide) MKBOOTIMG=$(MKBOOTIMG) \
 	   $(OTA_FROM_TARGET_SCRIPT) -v \
-	   --block \
 	   -p $(HOST_OUT) \
 	   -k $(KEY_CERT_PAIR) \
 	   --backup=$(backuptool) \
