@@ -39,11 +39,11 @@ default_rem = "teameos"
 default_rev = "lp5.0"
 # set this to the remote that you use for projects from your team repos
 # example fetch="https://github.com/omnirom"
-default_team_rem = "TeamEOS"
+default_team_rem = "teameos"
 # this shouldn't change unless google makes changes
 local_manifest_dir = ".repo/local_manifests"
 # change this to your name on github (or equivalent hosting)
-android_team = "TeamEOS"
+android_team = "teameos"
 
 
 def check_repo_exists(git_data):
@@ -71,16 +71,10 @@ def search_github_for_device(device):
 def get_device_url(git_data):
     device_url = ""
     for item in git_data['items']:
-        temp_url = item.get('html_url')
-        if "{}/device_".format(android_team) in temp_url:
-            try:
-                temp_url = temp_url[temp_url.index("device_"):]
-            except ValueError:
-                pass
-            else:
-                if temp_url.endswith(device):
-                    device_url = temp_url
-                    break
+        temp_url = item.get('name')
+        if temp_url.endswith(device):
+            device_url = temp_url
+            break
 
     if device_url:
         return device_url
@@ -89,12 +83,10 @@ def get_device_url(git_data):
 
 
 def parse_device_directory(device_url,device):
-    to_strip = "device_"
-    repo_name = device_url[device_url.index(to_strip) + len(to_strip):]
-    repo_name = repo_name[:repo_name.index(device)]
+    repo_name = device_url[:device_url.index(device)]
     repo_dir = repo_name.replace("_", "/")
     repo_dir = repo_dir + device
-    return "device/{}".format(repo_dir)
+    return repo_dir
 
 
 # Thank you RaYmAn
