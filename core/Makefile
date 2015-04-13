@@ -1629,8 +1629,10 @@ endif
 name := $(name)-ota-$(FILE_NAME_TAG)
 
 INTERNAL_OTA_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name).zip
+INTERNAL_NOBLOCK_PACKAGE_TARGET := $(PRODUCT_OUT)/$(name)-noblock.zip
 
 $(INTERNAL_OTA_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
+$(INTERNAL_NOBLOCK_PACKAGE_TARGET): KEY_CERT_PAIR := $(DEFAULT_KEY_CERT_PAIR)
 
 ifeq ($(TARGET_RELEASETOOL_OTA_FROM_TARGET_SCRIPT),)
     OTA_FROM_TARGET_SCRIPT := ./build/tools/releasetools/ota_from_target_files
@@ -1640,24 +1642,31 @@ endif
 
 ifeq ($(WITH_GMS),true)
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
+    $(INTERNAL_NOBLOCK_PACKAGE_TARGET): backuptool := false
 else
 ifneq ($(EOS_BUILD),)
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := true
+    $(INTERNAL_NOBLOCK_PACKAGE_TARGET): backuptool := true
 else
     $(INTERNAL_OTA_PACKAGE_TARGET): backuptool := false
+    $(INTERNAL_NOBLOCK_PACKAGE_TARGET): backuptool := false
 endif
 endif
 
 ifeq ($(TARGET_OTA_ASSERT_DEVICE),)
     $(INTERNAL_OTA_PACKAGE_TARGET): override_device := auto
+    $(INTERNAL_NOBLOCK_PACKAGE_TARGET): override_device := auto
 else
     $(INTERNAL_OTA_PACKAGE_TARGET): override_device := $(TARGET_OTA_ASSERT_DEVICE)
+    $(INTERNAL_NOBLOCK_PACKAGE_TARGET): override_device := $(TARGET_OTA_ASSERT_DEVICE)
 endif
 
 ifneq ($(TARGET_UNIFIED_DEVICE),)
     $(INTERNAL_OTA_PACKAGE_TARGET): override_prop := --override_prop=true
+    $(INTERNAL_NOBLOCK_PACKAGE_TARGET): override_prop := --override_prop=true
     ifeq ($(TARGET_OTA_ASSERT_DEVICE),)
         $(INTERNAL_OTA_PACKAGE_TARGET): override_device := $(TARGET_DEVICE)
+        $(INTERNAL_NOBLOCK_PACKAGE_TARGET): override_device := $(TARGET_DEVICE)
     endif
 endif
 
@@ -1680,6 +1689,20 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
+$(INTERNAL_NOBLOCK_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
+	@echo "$(OTA_FROM_TARGET_SCRIPT)" > $(PRODUCT_OUT)/ota_script_path
+	@echo "$(override_device)" > $(PRODUCT_OUT)/ota_override_device
+	@echo -e ${CL_YLW}"Package OTA:"${CL_RST}" $@"
+	$(hide) MKBOOTIMG=$(MKBOOTIMG) \
+	   $(OTA_FROM_TARGET_SCRIPT) -v \
+	   -p $(HOST_OUT) \
+	   -k $(KEY_CERT_PAIR) \
+	   --backup=$(backuptool) \
+	   --override_device=$(override_device) $(override_prop) \
+	   --extra_script=$(CUSTOM_EXTRA_SCRIPT) \
+	   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
+	   $(BUILT_TARGET_FILES_PACKAGE) $@
+
 EOS_TARGET_PACKAGE := $(PRODUCT_OUT)/eos-$(EOS_VERSION).zip
 
 .PHONY: otapackage bacon
@@ -1688,6 +1711,9 @@ bacon: otapackage
 	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(EOS_TARGET_PACKAGE)
 	$(hide) $(MD5SUM) $(EOS_TARGET_PACKAGE) > $(EOS_TARGET_PACKAGE).md5sum
 	@echo -e ${CL_CYN}"Package Complete: $(EOS_TARGET_PACKAGE)"${CL_RST}
+
+.PHONY: noblockpackage
+noblockpackage: $(INTERNAL_NOBLOCK_PACKAGE_TARGET)
 
 endif    # recovery_fstab is defined
 endif    # TARGET_NO_KERNEL != true
