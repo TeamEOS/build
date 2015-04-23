@@ -36,7 +36,7 @@ except ImportError:
 # set this to the default remote to use in repo
 default_rem = "teameos"
 # set this to the default revision to use (branch/tag name)
-default_rev = "lp5.0"
+default_rev = "lp5.1"
 # set this to the remote that you use for projects from your team repos
 # example fetch="https://github.com/omnirom"
 default_team_rem = "teameos"
