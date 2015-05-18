@@ -237,11 +237,7 @@ def BuildImage(in_dir, prop_dict, out_file,
     if "extfs_sparse_flag" in prop_dict:
       build_command.append(prop_dict["extfs_sparse_flag"])
       #run_fsck = True
-    if "is_userdataexta" in prop_dict:
-      build_command.extend([in_dir, out_file, fs_type,
-                          prop_dict["mount_point"]])
-    else:
-      build_command.extend([in_dir, out_file, fs_type,
+    build_command.extend([in_dir, out_file, fs_type,
                           prop_dict["mount_point"]])
     build_command.append(prop_dict["partition_size"])
     if "journal_size" in prop_dict:
