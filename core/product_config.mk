@@ -181,7 +181,7 @@ include $(BUILD_SYSTEM)/device.mk
 
 # A EOS build needs only the EOS product makefiles.
 ifneq ($(EOS_BUILD),)
-  all_product_configs := $(shell ls device/*/$(EOS_BUILD)/eos.mk)
+  all_product_configs := $(shell find device -path "*/$(EOS_BUILD)/eos.mk")
 else
   ifneq ($(strip $(TARGET_BUILD_APPS)),)
   # An unbundled app build needs only the core product makefiles.
