@@ -192,10 +192,10 @@ ifeq ($(requires_openjdk), true)
 # java version is really openjdk
 ifeq ($(shell echo '$(java_version_str)' | grep -i openjdk),)
 $(info ************************************************************)
-$(info You asked for an OpenJDK 7 build but your version is)
-$(info $(java_version_str).)
+$(info The build environment requires an OpenJDK 7 build)
+$(info but your version is $(java_version_str).)
+$(info Please use OpenJDK 7 if possible.)
 $(info ************************************************************)
-$(error stop)
 endif # java version is not OpenJdk
 else # if requires_openjdk
 ifneq ($(shell echo '$(java_version_str)' | grep -i openjdk),)
