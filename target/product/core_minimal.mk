@@ -92,6 +92,7 @@ PRODUCT_BOOT_JARS := \
     voip-common \
     ims-common \
     mms-common \
+    org.teameos.navigation \
     android.policy \
     apache-xml \
 
