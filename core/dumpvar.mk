@@ -84,8 +84,11 @@ $(info   HOST_OS_EXTRA=$(HOST_OS_EXTRA))
 $(info   HOST_BUILD_TYPE=$(HOST_BUILD_TYPE))
 $(info   BUILD_ID=$(BUILD_ID))
 $(info   OUT_DIR=$(OUT_DIR))
-ifeq ($(EOSPRIV_TARGET),true)
+
+ifneq (,$(filter true, $(EOSPRIV_TARGET) $(EXTERNAL_CLEAN_TARGET)))
+ifeq ($(EOSPRIV_TARGET), true)
 $(info   EOSPRIV_TARGET=$(EOSPRIV_TARGET))
+endif
 $(info   EOSPRIV_FEATURES=$(EOSPRIV_FEATURES))
 endif
 $(info ============================================)
