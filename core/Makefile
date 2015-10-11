@@ -193,6 +193,7 @@ endif
 	$(hide) TARGET_BUILD_TYPE="$(TARGET_BUILD_VARIANT)" \
 			TARGET_BUILD_FLAVOR="$(TARGET_PRODUCT)-$(TARGET_BUILD_VARIANT)" \
 			TARGET_DEVICE="$(TARGET_DEVICE)" \
+			EOS_DEVICE="$(TARGET_DEVICE)" \
 			PRODUCT_NAME="$(TARGET_PRODUCT)" \
 			PRODUCT_BRAND="$(PRODUCT_BRAND)" \
 			PRODUCT_DEFAULT_LOCALE="$(call get-default-product-locale,$(PRODUCT_LOCALES))" \
@@ -1571,8 +1572,15 @@ $(INTERNAL_OTA_PACKAGE_TARGET): $(BUILT_TARGET_FILES_PACKAGE) $(DISTTOOLS)
 	   $(if $(OEM_OTA_CONFIG), -o $(OEM_OTA_CONFIG)) \
 	   $(BUILT_TARGET_FILES_PACKAGE) $@
 
-.PHONY: otapackage
+EOS_TARGET_PACKAGE := $(PRODUCT_OUT)/eos-$(EOS_VERSION).zip
+
+.PHONY: otapackage eospackage bacon
 otapackage: $(INTERNAL_OTA_PACKAGE_TARGET)
+eospackage: otapackage
+	$(hide) ln -f $(INTERNAL_OTA_PACKAGE_TARGET) $(EOS_TARGET_PACKAGE)
+	$(hide) $(MD5SUM) $(EOS_TARGET_PACKAGE) > $(EOS_TARGET_PACKAGE).md5sum
+	@echo "Package Complete: $(EOS_TARGET_PACKAGE)"
+bacon: eospackage
 
 endif    # recovery_fstab is defined
 endif    # TARGET_NO_KERNEL != true
