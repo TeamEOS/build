@@ -40,6 +40,10 @@ from xml.etree import ElementTree
 
 product = sys.argv[1];
 
+# Config
+default_remote = "TeamEOS"
+default_revision = "mm6.0"
+
 if len(sys.argv) > 2:
     depsonly = sys.argv[2]
 else:
@@ -51,7 +55,7 @@ except:
     device = product
 
 if not depsonly:
-    print("Device %s not found. Attempting to retrieve device repository from TeamEOS Github (http://github.com/TeamEOS)." % device)
+    print("Device %s not found. Attempting to retrieve device repository from Github (http://github.com/%s)." % (device, default_remote))
 
 repositories = []
 
@@ -70,7 +74,7 @@ def add_auth(githubreq):
         githubreq.add_header("Authorization","Basic %s" % githubauth)
 
 if not depsonly:
-    githubreq = urllib.request.Request("https://api.github.com/search/repositories?q=%s+user:TeamEOS+in:name+fork:true" % device)
+    githubreq = urllib.request.Request("https://api.github.com/search/repositories?q=%s+user:%s+in:name+fork:true" % (device, default_remote))
     add_auth(githubreq)
     try:
         result = json.loads(urllib.request.urlopen(githubreq).read().decode())
@@ -107,9 +111,6 @@ def indent(elem, level=0):
     else:
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
-
-def get_default_revision():
-    return 'mm6.0'
 
 def get_from_manifest(devicename):
     try:
@@ -169,23 +170,28 @@ def add_to_manifest(repositories, fallback_branch = None):
     for repository in repositories:
         repo_name = repository['repository']
         repo_target = repository['target_path']
-        default_revision = get_default_revision()
+
+        if not 'remote' in repository:
+            repo_name = '/'.join([default_remote, repo_name])
+
         if exists_in_tree(lm, repo_name):
-            print('TeamEOS/%s already exists' % (repo_name))
+            print('%s already exists' % repo_name)
             continue
 
-        print('Adding dependency: TeamEOS/%s -> %s' % (repo_name, repo_target))
+        print('Adding dependency: %s -> %s' % (repo_name, repo_target))
         project = ElementTree.Element("project", attrib = { "path": repo_target,
-            "remote": "github", "name": "TeamEOS/%s" % repo_name })
+            "remote": "github", "name": "%s" % repo_name })
 
         if 'branch' in repository:
             project.set('revision',repository['branch'])
+        elif 'revision' in repository:
+            project.set('revision',repository['revision'])
         elif fallback_branch:
             print("Using fallback branch %s for %s" % (fallback_branch, repo_name))
             project.set('revision', fallback_branch)
         else:
             print("Using default branch %s for %s" % (default_revision, repo_name))
-            project.set('revision',default_revision)
+            project.set('revision', default_revision)
 
         lm.append(project)
 
@@ -208,7 +214,13 @@ def fetch_dependencies(repo_path, fallback_branch = None):
         fetch_list = []
 
         for dependency in dependencies:
-            if not is_in_manifest("TeamEOS/%s" % dependency['repository']):
+
+            if not 'remote' in dependency:
+                repo_name = '/'.join([default_remote, dependency['repository']])
+            else:
+                repo_name = dependency['repository']
+
+            if not is_in_manifest(repo_name):
                 fetch_list.append(dependency)
                 syncable_repos.append(dependency['target_path'])
 
@@ -247,7 +259,6 @@ else:
 
             manufacturer = repo_name.replace("device_", "").replace("_" + device, "")
 
-            default_revision = get_default_revision()
             print("Default revision: %s" % default_revision)
             print("Checking branch info")
             githubreq = urllib.request.Request(repository['branches_url'].replace('{/branch}', ''))
@@ -291,4 +302,4 @@ else:
             print("Done")
             sys.exit()
 
-print("Repository for %s not found in the TeamEOS Github repository list. If this is in error, you may need to manually add it to your local_manifests/roomservice.xml." % device)
+print("Repository for %s not found in the %s Github repository list. If this is in error, you may need to manually add it to your local_manifests/roomservice.xml." % (device, default_remote))
