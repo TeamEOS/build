@@ -40,6 +40,10 @@ from xml.etree import ElementTree
 
 product = sys.argv[1];
 
+# Config
+default_remote = "TeamEOS"
+default_revision = "mm6.0"
+
 if len(sys.argv) > 2:
     depsonly = sys.argv[2]
 else:
@@ -51,7 +55,7 @@ except:
     device = product
 
 if not depsonly:
-    print("Device %s not found. Attempting to retrieve device repository from CyanogenMod Github (http://github.com/CyanogenMod)." % device)
+    print("Device %s not found. Attempting to retrieve device repository from Github (http://github.com/%s)." % (device, default_remote))
 
 repositories = []
 
@@ -70,7 +74,7 @@ def add_auth(githubreq):
         githubreq.add_header("Authorization","Basic %s" % githubauth)
 
 if not depsonly:
-    githubreq = urllib.request.Request("https://api.github.com/search/repositories?q=%s+user:CyanogenMod+in:name+fork:true" % device)
+    githubreq = urllib.request.Request("https://api.github.com/search/repositories?q=%s+user:%s+in:name+fork:true" % (device, default_remote))
     add_auth(githubreq)
     try:
         result = json.loads(urllib.request.urlopen(githubreq).read().decode())
@@ -108,12 +112,6 @@ def indent(elem, level=0):
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
 
-def get_default_revision():
-    m = ElementTree.parse(".repo/manifest.xml")
-    d = m.findall('default')[0]
-    r = d.get('revision')
-    return r.replace('refs/heads/', '').replace('refs/tags/', '')
-
 def get_from_manifest(devicename):
     try:
         lm = ElementTree.parse(".repo/local_manifests/roomservice.xml")
@@ -122,7 +120,7 @@ def get_from_manifest(devicename):
         lm = ElementTree.Element("manifest")
 
     for localpath in lm.findall("project"):
-        if re.search("android_device_.*_%s$" % device, localpath.get("name")):
+        if re.search("device_.*_%s$" % device, localpath.get("name")):
             return localpath.get("path")
 
     # Devices originally from AOSP are in the main manifest...
@@ -133,7 +131,7 @@ def get_from_manifest(devicename):
         mm = ElementTree.Element("manifest")
 
     for localpath in mm.findall("project"):
-        if re.search("android_device_.*_%s$" % device, localpath.get("name")):
+        if re.search("device_.*_%s$" % device, localpath.get("name")):
             return localpath.get("path")
 
     return None
@@ -172,21 +170,28 @@ def add_to_manifest(repositories, fallback_branch = None):
     for repository in repositories:
         repo_name = repository['repository']
         repo_target = repository['target_path']
+
+        if not 'remote' in repository:
+            repo_name = '/'.join([default_remote, repo_name])
+
         if exists_in_tree(lm, repo_name):
-            print('CyanogenMod/%s already exists' % (repo_name))
+            print('%s already exists' % repo_name)
             continue
 
-        print('Adding dependency: CyanogenMod/%s -> %s' % (repo_name, repo_target))
+        print('Adding dependency: %s -> %s' % (repo_name, repo_target))
         project = ElementTree.Element("project", attrib = { "path": repo_target,
-            "remote": "github", "name": "CyanogenMod/%s" % repo_name })
+            "remote": "github", "name": "%s" % repo_name })
 
         if 'branch' in repository:
             project.set('revision',repository['branch'])
+        elif 'revision' in repository:
+            project.set('revision',repository['revision'])
         elif fallback_branch:
             print("Using fallback branch %s for %s" % (fallback_branch, repo_name))
             project.set('revision', fallback_branch)
         else:
-            print("Using default branch for %s" % repo_name)
+            print("Using default branch %s for %s" % (default_revision, repo_name))
+            project.set('revision', default_revision)
 
         lm.append(project)
 
@@ -200,7 +205,7 @@ def add_to_manifest(repositories, fallback_branch = None):
 
 def fetch_dependencies(repo_path, fallback_branch = None):
     print('Looking for dependencies')
-    dependencies_path = repo_path + '/cm.dependencies'
+    dependencies_path = repo_path + '/eos.dependencies'
     syncable_repos = []
 
     if os.path.exists(dependencies_path):
@@ -209,7 +214,13 @@ def fetch_dependencies(repo_path, fallback_branch = None):
         fetch_list = []
 
         for dependency in dependencies:
-            if not is_in_manifest("CyanogenMod/%s" % dependency['repository']):
+
+            if not 'remote' in dependency:
+                repo_name = '/'.join([default_remote, dependency['repository']])
+            else:
+                repo_name = dependency['repository']
+
+            if not is_in_manifest(repo_name):
                 fetch_list.append(dependency)
                 syncable_repos.append(dependency['target_path'])
 
@@ -243,12 +254,11 @@ if depsonly:
 else:
     for repository in repositories:
         repo_name = repository['name']
-        if repo_name.startswith("android_device_") and repo_name.endswith("_" + device):
+        if repo_name.startswith("device_") and repo_name.endswith("_" + device):
             print("Found repository: %s" % repository['name'])
-            
-            manufacturer = repo_name.replace("android_device_", "").replace("_" + device, "")
-            
-            default_revision = get_default_revision()
+
+            manufacturer = repo_name.replace("device_", "").replace("_" + device, "")
+
             print("Default revision: %s" % default_revision)
             print("Checking branch info")
             githubreq = urllib.request.Request(repository['branches_url'].replace('{/branch}', ''))
@@ -260,10 +270,10 @@ else:
                 githubreq = urllib.request.Request(repository['tags_url'].replace('{/tag}', ''))
                 add_auth(githubreq)
                 result.extend (json.loads(urllib.request.urlopen(githubreq).read().decode()))
-            
+
             repo_path = "device/%s/%s" % (manufacturer, device)
             adding = {'repository':repo_name,'target_path':repo_path}
-            
+
             fallback_branch = None
             if not has_branch(result, default_revision):
                 if os.getenv('ROOMSERVICE_BRANCHES'):
@@ -292,4 +302,4 @@ else:
             print("Done")
             sys.exit()
 
-print("Repository for %s not found in the CyanogenMod Github repository list. If this is in error, you may need to manually add it to your local_manifests/roomservice.xml." % device)
+print("Repository for %s not found in the %s Github repository list. If this is in error, you may need to manually add it to your local_manifests/roomservice.xml." % (device, default_remote))
