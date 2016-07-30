@@ -388,15 +388,17 @@ user_variant := $(filter user userdebug,$(TARGET_BUILD_VARIANT))
 enable_target_debugging := true
 tags_to_install :=
 ifneq (,$(user_variant))
-  # Target is secure in user builds.
-  ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=1
-  ADDITIONAL_DEFAULT_PROPERTIES += security.perf_harden=1
-
   ifeq ($(user_variant),user)
+    # Target is secure in user builds.
+    ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=1
+    ADDITIONAL_DEFAULT_PROPERTIES += security.perf_harden=1
     ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=1
   endif
 
   ifeq ($(user_variant),userdebug)
+    # Target is insecure in userdebug builds.
+    ADDITIONAL_DEFAULT_PROPERTIES += ro.secure=0
+    ADDITIONAL_DEFAULT_PROPERTIES += ro.adb.secure=0
     # Pick up some extra useful tools
     tags_to_install += debug
   else
